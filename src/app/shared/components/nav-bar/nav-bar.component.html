@@ -1,0 +1,19 @@
+<div class="header">
+
+<div class="header--item">
+    <h3 class="header--item__lives">Lives</h3> 
+    <span class="header--item__lives" ><fa-icon class="live-up fa-lg" [icon]="faHeart" [ngClass]="(lives$ | async) < 1 ? 'live-down' : 'live-up'" ></fa-icon></span> 
+    <span class="header--item__lives" ><fa-icon class="live-up fa-lg" [icon]="faHeart" [ngClass]="(lives$ | async) < 2 ? 'live-down' : 'live-up'" ></fa-icon></span> 
+    <span class="header--item__lives" ><fa-icon class="live-up fa-lg" [icon]="faHeart" [ngClass]="(lives$ | async) === 3 ? 'live-up' : 'live-down'" ></fa-icon></span> 
+</div>
+
+    <ng-container class="header--item" *ngIf="(questions$ | async | keyvalue) as questions">
+        <h3 [hidden]="questions.length === 0" class="header--item__questions" >Questions: {{(currentQuestion$ | async)}} / {{questions.length-1}}</h3>
+    </ng-container>
+
+    <div class="header--item">
+        <h3 class="header--item__lives">Score:</h3>  
+        <input class="input-s" [value]="(correctAnswers$ | async)" readonly type="text" name="search" >
+    </div>
+
+</div>

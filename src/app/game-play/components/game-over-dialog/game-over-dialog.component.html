@@ -1,0 +1,19 @@
+<div *ngIf="visible" [@slideInOut]>
+    <div class="container">
+        <div class="gameover">
+            <p> GAME OVER </p>
+
+        </div>
+    </div>
+
+    <div class="game-results" >
+        <h1 class="answer-correctly">YOU ANSWERED CORRECTLY ON:</h1>
+        <h1 class="out-of">{{(correctAnswers$ | async)}} OUT OF {{(numberOfQuestions$ | async)}} QUESTIONS</h1>
+    </div>
+
+    <div class="footer">
+        <h1 style="color: white;">Enter Your Name</h1>
+        <input type="text" style="font-size:1.7rem" name="playerName" [(ngModel)]="playerName">
+        <button class="reg-btn" (click)="addToLeaderBoard(answers)">Save</button>
+    </div>
+</div>

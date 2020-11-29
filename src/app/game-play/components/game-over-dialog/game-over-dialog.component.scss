@@ -1,0 +1,86 @@
+::ng-deep .p-dialog .p-dialog-header  {
+    background-color: transparent;
+}
+::ng-deep .p-dialog .p-dialog-content  {
+    background-color: transparent;
+}
+
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .game-over{
+        align-self: flex-end;  
+    }
+}
+
+.game-results { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-direction: column; 
+    width: 100%; 
+    text-align: center; 
+    min-height: 40rem;  
+    align-items: center; 
+    color:white;
+} 
+
+.answer-correctly{
+    font-size:3rem;
+    @media screen and (max-width: 1400px) {
+        font-size:2rem;
+    }
+}
+
+.out-of{
+    font-size:5rem;
+    @media screen and (max-width: 1400px) {
+        font-size:2.5rem;
+    }
+}
+
+
+.footer { 
+    display: flex; 
+    justify-content: center; 
+    flex-direction: column; 
+    width: 100%; 
+    text-align: center; 
+    align-items: center; 
+    @media screen and (max-width: 1400px) {
+        height: 3rem;
+        position: relative;
+        bottom:5rem;
+    }
+} 
+
+.gameover {
+    width:75rem;
+    height: auto;
+    padding-top: 60px;
+    background: none;
+    @media screen and (max-width: 1400px) {
+        height: 3rem;
+    }
+
+}
+
+.gameover p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 12rem;
+    line-height: 120px;
+    text-align: center;
+    font-weight: 1000;
+    text-shadow: 5px 5px #000000;
+    color:#e7ec97;
+    @media screen and (max-width: 1400px) {
+        font-size: 8rem;
+    }
+    @media screen and (max-width: 600px) {
+        font-size: 5rem;
+    }
+}
+
