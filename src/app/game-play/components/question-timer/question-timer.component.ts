@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, timer } from 'rxjs';
 import { faHourglass } from '@fortawesome/free-solid-svg-icons';
 import { map } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class QuestionTimerComponent implements OnInit {
   @Output() timeIsUp: EventEmitter<boolean> = new EventEmitter<boolean>(); // boolean page
-
+  @Input() newQuestionStarted: boolean;
   faHourglass = faHourglass;
   counter: number = 20;
   tick: number = 1000;

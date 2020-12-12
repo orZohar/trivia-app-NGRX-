@@ -8,7 +8,7 @@
 </div>
 
     <ng-container class="header--item" *ngIf="(questions$ | async | keyvalue) as questions">
-        <h3 [hidden]="questions.length === 0" class="header--item__questions" >Questions: {{(currentQuestion$ | async)}} / {{questions.length-1}}</h3>
+        <h3 [hidden]="questions.length === 0" class="header--item__questions" >Questions: {{(currentQuestion$ | async)}} / {{questions.length}}</h3>
     </ng-container>
 
     <div class="header--item">

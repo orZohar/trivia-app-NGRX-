@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
+import { LoadQuestions, LOAD_QUESTIONS} from '../actions/game.actions';
+import * as fromActions from '../actions/game.actions';
+
 // import {
 //   AllCoursesLoaded,
 // } from './course.actions';
-import { GamePlayService } from '../services/game-play.service';
-import { throwError, of, Observable } from 'rxjs';
-import { catchError, concatMap, exhaustMap, filter, map, mergeMap, tap, withLatestFrom } from "rxjs/operators";
-import { Action, select, Store } from '@ngrx/store';
-import { setQuestions } from '../actions/game.actions';
+import { GamePlayService } from '../../services/game-play.service';
+import { Observable } from 'rxjs';
+import { map, mergeMap } from "rxjs/operators";
+import { Action } from '@ngrx/store';
+//import { setQuestions } from '../actions/game.actions';
 import { OnInitEffects } from '@ngrx/effects';
 import { HttpClient } from '@angular/common/http';
 
@@ -23,7 +26,8 @@ export class GameEffects implements OnInitEffects {
   initQuestions$: Observable<Action> = this.actions$.pipe(
     ofType('[GameEffects] INIT'),
     mergeMap((action) => this.gamePlayService.getQuestions()),
-    map((data) => setQuestions(data as any))
+    map((data) => new fromActions.LoadQuestionsSuccess(data as any))
+    // catchError(error => of(error)))
   )
 
 }

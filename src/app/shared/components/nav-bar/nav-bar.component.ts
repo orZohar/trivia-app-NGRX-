@@ -5,7 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GameQuestion } from '../../models/game-question.model';
-
+import * as fromStore from '../../../game-play/store';
 @Component({
   selector: 'nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -20,19 +20,19 @@ export class NavBarComponent implements OnInit {
   convertToPoints: number = 100;
 
   lives$: Observable<number> = this.store$.pipe(
-    select('game', 'lives'),
+    select(fromStore.getLives),
     tap(x => { this.livesLeft = x })
   )
 
   correctAnswers$: Observable<number> = this.store$.pipe(
-    select('game', 'correctAnswers'),
+    select(fromStore.getCorrectAnswers),
     map(answers => this.convertToPoints * answers),
   )
   questions$: Observable<GameQuestion[]> = this.store$.pipe(
-    select('game', 'questions')
+    select(fromStore.getAllQuestions),
   )
   currentQuestion$: Observable<number> = this.store$.pipe(
-    select('game', 'currentQuestion')
+    select(fromStore.getCurrentQuestion),
   )
 
   constructor(private httpClient: HttpClient, private store$: Store<any>) { }

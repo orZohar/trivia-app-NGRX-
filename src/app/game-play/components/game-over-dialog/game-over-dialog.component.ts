@@ -7,6 +7,7 @@ import { GamePlayService } from '../../services/game-play.service';
 import { SlideInOutAnimation } from 'src/app/shared/animations';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import * as fromStore from '../../store';
 
 @Component({
   selector: 'app-game-over-dialog',
@@ -34,9 +35,10 @@ export class GameOverDialogComponent implements OnInit {
       this.changeDetectorRef.markForCheck();
     }, 0);
 
-    this.correctAnswers$ = this.store$.pipe(select('game', 'correctAnswers'),tap(x=>this.correctAnswers = x));
-    this.numberOfQuestions$ = this.store$.pipe(select('game', 'currentQuestion'));
+    this.correctAnswers$ = this.store$.pipe(select(fromStore.getCorrectAnswers),tap(x=>this.correctAnswers = x));
+    this.numberOfQuestions$ = this.store$.pipe(select(fromStore.getCurrentQuestion));
   }
+  
   addToLeaderBoard() {
     if (this.playerName) {
       // update server (local storage in our case)

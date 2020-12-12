@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TrackByService } from 'src/app/core/services/trackby.service';
-import { setInitData } from 'src/app/game-play/actions/game.actions';
+import * as fromActions from '../../../game-play/store/actions/game.actions';
 
 @Component({
   selector: 'app-leader-board-page',
@@ -17,7 +17,7 @@ export class LeaderBoardPageComponent implements OnInit {
   ngOnInit(): void {}
   startNewGame() {
     // init store state before starting a new game
-    this.store$.dispatch(setInitData());
+    this.store$.dispatch(new fromActions.setInitData());
     this.store$.dispatch({ type: '[GameEffects] INIT' });
     this.router.navigate(['gameplay']);
   }

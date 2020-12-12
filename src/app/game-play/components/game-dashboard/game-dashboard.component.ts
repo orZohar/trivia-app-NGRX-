@@ -3,11 +3,13 @@ import { select, Store } from '@ngrx/store';
 import { Observable, Subject, timer } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { GameQuestion } from 'src/app/shared/models/game-question.model';
-import { setCorrectAnswers, setCurrentQuestion, setLives } from '../../actions/game.actions';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { GameOverDialogComponent } from '../game-over-dialog/game-over-dialog.component';
 import { TrackByService } from '../../../core/services/trackby.service';
 import { fadeInOut } from 'src/app/shared/animations';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import * as fromActions from '../../store/actions/game.actions';
+import * as fromStore from '../../store';
 
 @Component({
   selector: 'app-game-dashboard',
@@ -27,24 +29,25 @@ export class GameDashboardComponent implements OnInit {
   clickToggle: boolean = false;
   gameIsRunning: boolean = true;
   prepareNextQuestionMsg: string = "";
+ // newQuestionStarted = true;
   nextQuestionTimer = timer(3000);
   destroy$ = new Subject();
   startQuestionCheckingProcess: boolean = false; // boolean for disable/enable timer 
   questions$: Observable<GameQuestion[]>;
 
-  constructor(private store$: Store<any>, public dialogService: DialogService, public trackbyService: TrackByService) { }
+  constructor(private store$: Store<fromStore.GameState>, public dialogService: DialogService, public trackbyService: TrackByService) { }
 
   ngOnInit(): void {
-    this.store$.pipe(select('game', 'currentQuestion'), take(1)).subscribe(result => {
+    this.store$.pipe(select(fromStore.getCurrentQuestion), take(1)).subscribe(result => {
       this.currentQuestion = result;
     })
 
-    this.store$.pipe(select('game', 'lives'), take(1)).subscribe(result => {
+    this.store$.pipe(select(fromStore.getLives), take(1)).subscribe(result => {
       this.livesLeft = result;
     })
 
     this.questions$ = this.store$.pipe(
-      select('game', 'questions'),
+      select(fromStore.getAllQuestions),
       tap(questionsArray => {
         // assign all the answers to matrix of answers and shuffle every array
         this.answersMatrix = [];
@@ -54,6 +57,8 @@ export class GameDashboardComponent implements OnInit {
   }
 
   updateAnswer(isCorrect, timeIsUp, skipQuestion) {
+    //this.newQuestionStarted = false;
+
     if (skipQuestion) {
       this.handleSkippedQuestion();
     } else {
@@ -66,14 +71,14 @@ export class GameDashboardComponent implements OnInit {
     }
 
     // if user ended his lives or finished all the questions
-    if (this.answersMatrix.length-1 === this.currentQuestion || this.livesLeft === 0) {
+    if (this.answersMatrix.length === this.currentQuestion || this.livesLeft === 0) {
       this.finishTheGame();
     }
   }
 
   assignAnswersToMatrix(questionsArray) {
     var tempArray = [];
-    for (let question of Object.values(questionsArray)) {
+    for (let question of questionsArray) {
       tempArray = tempArray.concat(question['incorrect_answers']);
       tempArray.push(question['correct_answer']);
       tempArray = this.shuffleAnswers(tempArray);
@@ -82,27 +87,33 @@ export class GameDashboardComponent implements OnInit {
     }
   }
 
-
   handleSkippedQuestion() {
     this.livesLeft--;
-    // when user has no lives
+    // if user is out of life don't go to next question
     if (this.livesLeft !== 0) {
       this.currentQuestion++;
     }
-    this.currQuestionIndex++;
-    this.store$.dispatch(setLives({ lives: this.livesLeft }));
-    this.store$.dispatch(setCorrectAnswers({ correctAnswers: this.correctAnswers }));
-    this.store$.dispatch(setCurrentQuestion({ currentQuestion: this.currentQuestion }));
+    this.currQuestionIndex++; // it doesn't matter whether i will update the index because i ngIf all of this section
+
+    // this.store$.dispatch(setLives({ lives: this.livesLeft }));
+    this.store$.dispatch(new fromActions.SetLives(this.livesLeft));
+    this.store$.dispatch(new fromActions.setCorrectAnswers(this.livesLeft));
+    this.store$.dispatch(new fromActions.setCurrentQuestion(this.currentQuestion));
   }
 
   runQuestionTimer() {
     this.nextQuestionTimer.pipe(takeUntil(this.destroy$)).subscribe(val => {
+      // take down the message 
       this.prepareNextQuestionMsg = ""
+      // move to the next question
       this.currQuestionIndex++;
+     // this.newQuestionStarted = true;
+
       this.startQuestionCheckingProcess = false;
+      // if game is not running anymore don't go forward with the questions and don't update the store
       if (this.gameIsRunning) {
         this.currentQuestion++;
-        this.store$.dispatch(setCurrentQuestion({ currentQuestion: this.currentQuestion }));
+        this.store$.dispatch(new fromActions.setCurrentQuestion(this.currentQuestion));
       }
     })
   }
@@ -111,10 +122,11 @@ export class GameDashboardComponent implements OnInit {
     if (isCorrect) {
       this.correctAnswers++;
       this.prepareNextQuestionMsg = "GOOD JOB!!! Prepare for the next question...";
-      this.store$.dispatch(setCorrectAnswers({ correctAnswers: this.correctAnswers }));
+      this.store$.dispatch(new fromActions.setCorrectAnswers(this.correctAnswers));
     } else {
       this.livesLeft--;
-      this.store$.dispatch(setLives({ lives: this.livesLeft }));
+      this.store$.dispatch(new fromActions.SetLives(this.livesLeft));
+
       this.prepareNextQuestionMsg = timeIsUp ? "TIMES UP :( Prepare for the next question..." : "WRONG!!! Prepare for the next question...";
     }
   }
